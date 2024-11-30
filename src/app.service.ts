@@ -4,7 +4,6 @@ import { ValidRoles } from './auth/interfaces';
 
 @Injectable()
 export class AppService {
-  @Auth(ValidRoles.admin)
   getHello(): string {
     return 'Hello World!';
   }

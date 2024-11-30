@@ -20,8 +20,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       imports:[ConfigModule],
       inject:[ConfigService],
       useFactory:(configService:ConfigService) => {
-        //console.log(`Secret Jwt: ${configService.get('JWT_SECRET')}`)
-        //console.log(`Secret Jwt: ${process.env.JWT_SECRET}`)
+        console.log(`Secret Jwt: ${configService.get('JWT_SECRET')}`)
+        console.log(`Secret Jwt: ${process.env.JWT_SECRET}`)
         return{
           secret: configService.get('JWT_SECRET'),
           signOptions:{
@@ -32,6 +32,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     })
   ],
   providers: [AuthService , JwtStrategy],
-  exports:[TypeOrmModule, JwtStrategy, PassportModule, JwtModule, ]
+  exports:[TypeOrmModule, JwtStrategy, PassportModule, JwtModule ]
 })
 export class AuthModule {}

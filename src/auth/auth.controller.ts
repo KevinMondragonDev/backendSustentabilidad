@@ -1,88 +1,45 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, SetMetadata } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { get, request } from 'http';
+
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { GetUser } from './decorators/get-user.decorator';
-import { get, request } from 'http';
-import { RawHeaders } from './decorators/get-rawHeaders.decorator';
-import { UserRoleGuard } from './guards/user-role.guard';
-import { RoleProtected } from './decorators/role-protected.decorator';
-import { ValidRoles } from './interfaces';
 import { Auth } from './decorators/auth.decorator';
+import { ApiResponse } from '@nestjs/swagger';
 
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiResponse({ status: 201, description: 'User was created successfully', type: CreateUserDto})
+  @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Post('register')
   createUser(@Body() createUserDto:CreateUserDto) {
     return this.authService.create(createUserDto);
   }
+
+  @ApiResponse({ status: 201, description: 'User logged in', type: LoginUserDto})
+  @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Post('login')
   loginUser(@Body() loginUserDto:LoginUserDto) {
     return this.authService.login(loginUserDto);
   }
 
+
+  @ApiResponse({ status: 201, description: 'User check-status', type: User})
+  @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Get('check-status')
   @Auth()
   checkAuthStatus(
     @GetUser() user: User
   ){
     return this.authService.checkAuthStatus(user)
-  }
-
-  @Get('private')
-  @UseGuards(AuthGuard()) 
-  testingPrivateRoute(
-    @Req() request:Express.Request,
-    @GetUser() user:User,
-    @GetUser('mail') userMail:string,
-
-    @RawHeaders() rawHeaders:string[]
-  ){
-
-
-    return {
-      ok:true,
-      message:"Hola mundo privado",
-      user,
-      userMail,
-      rawHeaders
-    }
-  }
-
-  //* @SetMetadata('roles', ['admin','super-user'])
-
-  @Get('private2')
-  @RoleProtected(ValidRoles.superUser, ValidRoles.admin)
-  @UseGuards(AuthGuard() , UserRoleGuard)
-  //Cuando es un Guard personalizado no se pone "()"
-  privateRoute2(
-    @GetUser() user:User,
-  ){
-    console.log(request)
-
-    return {
-      ok:true,
-      message:"Hola mundo privado",
-      user
-    }
-  }
-
-  @Get('private3')
-  @Auth(ValidRoles.admin, ValidRoles.superUser)
-  privateRoute3(
-    @GetUser() user:User,
-  ){
-    console.log(request)
-
-    return {
-      ok:true,
-      message:"Hola mundo privado",
-      user
-    }
   }
 
 }
