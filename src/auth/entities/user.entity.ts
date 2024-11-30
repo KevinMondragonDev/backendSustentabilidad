@@ -52,7 +52,7 @@ export class User {
     //* Roles de los usuarios
     @ApiProperty({
         description: 'Los diferentes tipos usuarios de la app: admin, super-user, user, pero se define user por defecto',
-        type: String,
+        type: [String],
     
     })
     @Column('text' , {
