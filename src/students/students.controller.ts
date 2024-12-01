@@ -17,18 +17,20 @@ export class StudentsController {
     return this.studentsService.findAll();
   }
 
+  //*Es "term" dado a que buscaremos por matricula y/o nombre 
   @Get(':term')
-  findOne(@Param('term') term: string) {
+  findOne( @Param('term') term: string) {
     return this.studentsService.findOne(term);
   }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
     return this.studentsService.update(+id, updateStudentDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.studentsService.remove(+id);
+  @Delete(':term')
+  remove(@Param('term') term: string) {
+    return this.studentsService.remove(term);
   }
 }

@@ -5,6 +5,8 @@ import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isUUID } from 'class-validator';
+import { error } from 'console';
 
 @Injectable()
 export class StudentsService {
@@ -30,23 +32,31 @@ export class StudentsService {
   findAll() {
     
   }
-
-  findOne(term:string) {
-    try {
-      const student = this.studentRepository.findOneBy({matricula: term})
+  async findOne(term:string) {
+  
+    let student: Student;
+    student = await this.studentRepository.findOneBy({ matricula: term });
+          
+    if(!student){
+      student = await this.studentRepository.findOneBy({ nombreCompleto: term.toUpperCase() });
+      if(!student)
+        throw new BadRequestException("the student is not found")
       return student;
-
-    } catch (error) {
-      this.handleDBExceptions(error)
     }
-  }
+    return student; 
+    }
 
   update(id: number, updateStudentDto: UpdateStudentDto) {
     return `This action updates a #${id} student`;
   }
 
-  remove(id: number) {
+  async remove(term: string) {
+
+    const student = await this.findOne(term);
+    if(student)
+      await this.studentRepository.remove(student);
     
+    return "The students is remove"
   }
 
   private handleDBExceptions( error: any ) {
