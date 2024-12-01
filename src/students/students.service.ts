@@ -29,8 +29,14 @@ export class StudentsService {
    }
   }
 
-  findAll() {
+  async findAll(paginationDto:PaginationDto) {
+    const {limit=10 , offset= 0} = paginationDto;
+    const students = this.studentRepository.find({
+      take:limit,
+      skip:offset,
+    })
     
+    return students;
   }
   async findOne(term:string) {
   

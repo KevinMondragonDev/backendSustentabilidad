@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('students')
 export class StudentsController {
@@ -13,8 +14,8 @@ export class StudentsController {
   }
 
   @Get()
-  findAll() {
-    return this.studentsService.findAll();
+  findAll(@Query() paginationDto:PaginationDto) {
+    return this.studentsService.findAll(paginationDto);
   }
 
   //*Es "term" dado a que buscaremos por matricula y/o nombre 
