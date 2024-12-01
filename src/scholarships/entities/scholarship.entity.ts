@@ -15,12 +15,22 @@ export class Scholarship {
     @ApiProperty({
         example: 'ACADÉMICA',
         description: 'Tipo de beca otorgada al estudiante',
-        uniqueItems: true,
     })
-    @PrimaryColumn('text', {
+    @Column('text', {
         unique: true,
     })
     tipo_beca: string;
+  
+    @ApiProperty({
+        example: "50",
+        description: 'rango del porcentaje de la beca (entre 0 y 100)',
+    })
+    @Column('text' , {
+        array:true,
+        default:['60']
+    })
+    rango_porcentaje: string[];
+
 
     @ApiProperty({
         example: 'Para alumnos con promedios entre 8.5 y 9.4, ofreciendo una condonación de hasta el 80% de la cuota de reinscripción.',
@@ -28,6 +38,7 @@ export class Scholarship {
     })
     @Column()
     descripcion: string;
+
 
     @BeforeInsert()
     checkSlugUpdate() {
@@ -37,7 +48,7 @@ export class Scholarship {
 
     private normalizeString(input: string): string {
         return input
-            .toUpperCase()
+            .toLocaleLowerCase()
             .replaceAll(' ', '_')
             .replaceAll("'", '');
     }
