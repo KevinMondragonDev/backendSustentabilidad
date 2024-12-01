@@ -46,8 +46,20 @@ export class StudentsService {
     return student; 
     }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async update(matricula: string, updateStudentDto: UpdateStudentDto) {
+    try {
+      const student = await this.studentRepository.findOneBy({matricula:matricula})
+
+      if(!student)
+        throw new BadRequestException("The student is not found");
+
+      const studentUpdate = await this.studentRepository.merge(student, updateStudentDto);
+      await this.studentRepository.save(studentUpdate);
+      return studentUpdate;
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
+
   }
 
   async remove(term: string) {

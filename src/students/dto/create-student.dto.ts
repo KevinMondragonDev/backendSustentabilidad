@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsIn, IsNumber, IsOptional, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreateStudentDto {
     @ApiProperty({
@@ -8,6 +8,7 @@ export class CreateStudentDto {
         uniqueItems: true
     })
     @IsString()
+    @IsNotEmpty()
     matricula: string;
 
     @ApiProperty({

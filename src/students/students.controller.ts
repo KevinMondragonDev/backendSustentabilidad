@@ -24,9 +24,9 @@ export class StudentsController {
   }
 
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentsService.update(+id, updateStudentDto);
+  @Patch(':matricula')
+  update(@Param('matricula') matricula: string, @Body() updateStudentDto: UpdateStudentDto) {
+    return this.studentsService.update(matricula, updateStudentDto);
   }
 
   @Delete(':term')
