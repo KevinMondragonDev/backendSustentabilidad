@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentsModule } from './students/students.module';
+import { ScholarshipsModule } from './scholarships/scholarships.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { StudentsModule } from './students/students.module';
     
     CommonModule,
     AuthModule,
-    StudentsModule],
+    StudentsModule,
+    ScholarshipsModule],
   controllers: [AppController],
   providers: [AppService],
 
