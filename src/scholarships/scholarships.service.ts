@@ -33,16 +33,45 @@ export class ScholarshipsService {
     return scholarship;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} scholarship`;
+  async findOne(tipo_beca:string) {
+    try {
+      const scholarship = await this.scholarshipRepository.findOneBy({tipo_beca:tipo_beca})
+
+      if(!scholarship){
+        throw new BadRequestException(`The scholarship is not found`)
+      } 
+
+      return scholarship;
+    } catch (error) {
+        this.handleDBExceptions(error)
+    }
   }
 
-  update(id: number, updateScholarshipDto: UpdateScholarshipDto) {
-    return `This action updates a #${id} scholarship`;
+  async update(tipo_beca:string, updateScholarshipDto: UpdateScholarshipDto) {
+    try {
+      const scholarship = await this.findOne(tipo_beca.toLocaleLowerCase().replaceAll(' ', '_').replaceAll("'", ''))
+
+      if(!scholarship){
+        throw new BadRequestException("Is not found")
+      }
+
+      let scholarshipUpdate = await this.scholarshipRepository.merge(scholarship, updateScholarshipDto);
+      scholarshipUpdate.tipo_beca = scholarshipUpdate.tipo_beca.toLocaleLowerCase().replaceAll(' ', '_').replaceAll("'", '');      
+      await this.scholarshipRepository.save(scholarshipUpdate);
+      return scholarshipUpdate;
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} scholarship`;
+  async remove(tipo_beca:string) {
+
+    const scholarship = await this.findOne(tipo_beca)
+    if(scholarship){
+      await this.scholarshipRepository.remove(scholarship) 
+    }
+
+    return scholarship;
   }
 
 

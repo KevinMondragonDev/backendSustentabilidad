@@ -43,7 +43,6 @@ export class Scholarship {
     @BeforeInsert()
     checkSlugUpdate() {
         this.tipo_beca = this.normalizeString(this.tipo_beca);
-        this.descripcion = this.normalizeString(this.descripcion);
     }
 
     private normalizeString(input: string): string {

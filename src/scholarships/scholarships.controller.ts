@@ -3,33 +3,43 @@ import { ScholarshipsService } from './scholarships.service';
 import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 import { PaginationDto } from '../common/dtos/pagination.dto';
+import { ApiResponse } from '@nestjs/swagger';
+import { Scholarship } from './entities/scholarship.entity';
 
 @Controller('scholarships')
 export class ScholarshipsController {
   constructor(private readonly scholarshipsService: ScholarshipsService) {}
 
+  @ApiResponse({ status: 201, description: 'Scholarship check-status', type: Scholarship})
+  @ApiResponse({ status: 400, description: 'Key (tipo_beca)=(academica) already exists."' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Post()
   create(@Body() createScholarshipDto: CreateScholarshipDto) {
     return this.scholarshipsService.create(createScholarshipDto);
   }
 
+
+  @ApiResponse({ status: 201, description: 'Scholarship check-status', type: Scholarship})
+  @ApiResponse({ status: 400, description: 'Key (tipo_beca)=(academica) already exists."' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Get()
   findAll(@Query() paginationDto:PaginationDto) {
     return this.scholarshipsService.findAll(paginationDto);
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.scholarshipsService.findOne(+id);
+  
+  
+  @Get(':tipo_beca')
+  findOne(@Param('tipo_beca') tipo_beca: string) {
+    return this.scholarshipsService.findOne(tipo_beca);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateScholarshipDto: UpdateScholarshipDto) {
-    return this.scholarshipsService.update(+id, updateScholarshipDto);
+  @Patch(':tipo_beca')
+  update(@Param('tipo_beca') tipo_beca: string, @Body() updateScholarshipDto: UpdateScholarshipDto) {
+    return this.scholarshipsService.update(tipo_beca, updateScholarshipDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.scholarshipsService.remove(+id);
+  @Delete(':tipo_beca')
+  remove(@Param('tipo_beca') tipo_beca: string) {
+    return this.scholarshipsService.remove(tipo_beca);
   }
 }
