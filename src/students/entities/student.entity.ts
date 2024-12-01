@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 
 @Entity({ name: 'students' })
 export class Student {
+
+    @PrimaryGeneratedColumn('uuid')
+    id:string;
 
     @ApiProperty({
         example: '019001244',
@@ -13,14 +16,14 @@ export class Student {
     @PrimaryColumn('text', {
         unique: true,
     })
-    Matricula: string;
+    matricula: string;
 
     @ApiProperty({
         example: 'GONZALEZ GARCIA JOSUE',
         description: 'Nombre completo del estudiante',
     })
     @Column()
-    NombreCompleto: string;
+    nombreCompleto: string;
 
     @ApiProperty({
         example: '-',
@@ -30,7 +33,7 @@ export class Student {
     @Column('text', {
         nullable: true,
     })
-    Inclusion: string;
+    inclusion: string;
 
     @ApiProperty({
         example: '14BIS',
@@ -40,7 +43,7 @@ export class Student {
     @Column('text', {
         nullable: true,
     })
-    Generacion: string;
+    generacion: string;
 
     @ApiProperty({
         example: 'MASCULINO',
@@ -50,7 +53,7 @@ export class Student {
     @Column('text', {
         nullable: true,
     })
-    Genero: string;
+    genero: string;
 
     @ApiProperty({
         example: 'ING. EN ANIMACION Y EFECTOS VISUALES',
@@ -60,7 +63,7 @@ export class Student {
     @Column('text', {
         nullable: true,
     })
-    Carrera: string;
+    carrera: string;
 
     @ApiProperty({
         example: 10,
@@ -70,7 +73,7 @@ export class Student {
     @Column('int', {
         nullable: true,
     })
-    Cuatrimestre: number;
+    cuatrimestre: number;
 
     @ApiProperty({
         example: 'IAEV-29',
@@ -80,7 +83,7 @@ export class Student {
     @Column('text', {
         nullable: true,
     })
-    Grupo: string;
+    grupo: string;
     
     @ApiProperty({
         example: true,
@@ -90,14 +93,14 @@ export class Student {
     @Column('boolean', {
         nullable: true,
     })
-    Estatus: boolean;
+    estatus: boolean;
 
     @BeforeInsert()
     checkSlugUpdate() {
-        this.NombreCompleto = this.normalizeString(this.NombreCompleto);
-        this.Generacion = this.normalizeString(this.Generacion);
-        this.Genero = this.normalizeString(this.Genero);
-        this.Carrera = this.normalizeString(this.Carrera);
+        this.nombreCompleto = this.normalizeString(this.nombreCompleto);
+        this.generacion = this.normalizeString(this.generacion);
+        this.genero = this.normalizeString(this.genero);
+        this.carrera = this.normalizeString(this.carrera);
     }
 
     private normalizeString(input: string): string {

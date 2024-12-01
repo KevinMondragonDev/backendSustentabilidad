@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsBoolean, IsIn, IsNumber, IsOptional, Min, MinLength } from "class-validator";
-
+import { IsBoolean, IsIn, IsNumber, IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreateStudentDto {
     @ApiProperty({
@@ -8,74 +7,71 @@ export class CreateStudentDto {
         description: 'Matricula única del estudiante',
         uniqueItems: true
     })
-    @IsArray()
-    @MinLength(7)
+    @IsString()
     matricula: string;
 
     @ApiProperty({
         example: 'GONZALEZ GARCIA JOSUE',
         description: 'Nombre completo del estudiante',
     })
-    @IsArray()
+    @IsString()
     @MinLength(10)
-    NombreCompleto:string;
+    nombreCompleto: string;
 
     @ApiProperty({
         example: '-',
-        description: 'Si pertenece al area de inclusión',
+        description: 'Si pertenece al área de inclusión',
         nullable: true,
     })
-    @IsArray()
     @IsOptional()
-    Inclusion: string;
+    @IsString()
+    inclusion: string;
 
     @ApiProperty({
         example: '14BIS',
         description: 'Año de generación del estudiante',
         nullable: true,
     })
-    @IsArray()
     @IsOptional()
-    Generacion: string;
-
+    @IsString()
+    generacion: string;
 
     @ApiProperty({
         example: 'MASCULINO',
         description: 'Género del estudiante',
         nullable: true,
     })
-    @IsArray()
     @IsOptional()
+    @IsString()
     @IsIn(['FEMENINO', 'MASCULINO'])
-    Genero: string;
+    genero: string;
 
     @ApiProperty({
         example: 'ING. EN ANIMACION Y EFECTOS VISUALES',
         description: 'Carrera del estudiante',
         nullable: true,
     })
-    @IsArray()
     @IsOptional()
-    Carrera: string;
+    @IsString()
+    carrera: string;
 
     @ApiProperty({
         example: 10,
         description: 'Cuatrimestre actual del estudiante',
         nullable: true,
     })
-    @IsNumber()
     @IsOptional()
-    Cuatrimestre: number;
-
+    @IsNumber()
+    cuatrimestre: number;
 
     @ApiProperty({
         example: 'IAEV-29',
         description: 'Grupo al que pertenece el estudiante',
         nullable: true,
     })
-    @IsArray()
     @IsOptional()
-    Grupo: string;
+    @IsString()
+    grupo: string;
 
     @ApiProperty({
         example: true,
@@ -83,19 +79,5 @@ export class CreateStudentDto {
         nullable: true,
     })
     @IsBoolean()
-    Estatus: boolean;
+    estatus: boolean;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
