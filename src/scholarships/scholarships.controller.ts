@@ -8,7 +8,7 @@ import { Scholarship } from './entities/scholarship.entity';
 import { Auth } from 'src/auth/decorators';
 import { ValidRoles } from 'src/auth/interfaces';
 
-@Auth(ValidRoles.admin, ValidRoles.superUser)
+
 @Controller('scholarships')
 export class ScholarshipsController {
   constructor(private readonly scholarshipsService: ScholarshipsService) {}
@@ -16,6 +16,7 @@ export class ScholarshipsController {
   @ApiResponse({ status: 201, description: 'Scholarship check-status', type: Scholarship})
   @ApiResponse({ status: 400, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
+  @Auth(ValidRoles.admin)
   @Post()
   create(@Body() createScholarshipDto: CreateScholarshipDto) {
     return this.scholarshipsService.create(createScholarshipDto);
@@ -41,6 +42,7 @@ export class ScholarshipsController {
   @ApiResponse({ status: 201, description: 'Scholarship check-status', type: Scholarship})
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' }) 
+  @Auth(ValidRoles.admin)
   @Patch(':tipo_beca')
   update(@Param('tipo_beca') tipo_beca: string, @Body() updateScholarshipDto: UpdateScholarshipDto) {
     return this.scholarshipsService.update(tipo_beca, updateScholarshipDto);
@@ -49,6 +51,7 @@ export class ScholarshipsController {
   @ApiResponse({ status: 201, description: 'Scholarship is delete', type: Scholarship})
   @ApiResponse({ status: 401, description: 'Unauthorized"' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' }) 
+  @Auth(ValidRoles.admin)
   @Delete(':tipo_beca')
   remove(@Param('tipo_beca') tipo_beca: string) {
     return this.scholarshipsService.remove(tipo_beca);

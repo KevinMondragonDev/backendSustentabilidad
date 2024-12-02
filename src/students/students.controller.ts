@@ -8,6 +8,8 @@ import { ValidRoles } from 'src/auth/interfaces';
 import { ApiResponse } from '@nestjs/swagger';
 import { Student } from './entities/student.entity';
 
+//* Todo este controlador es solo para Administradores
+@Auth(ValidRoles.admin)
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {} 
@@ -16,7 +18,6 @@ export class StudentsController {
   @ApiResponse({ status: 400, description: 'User undefined need a valid role [admin]' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Post()
-  @Auth(ValidRoles.admin)
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
@@ -25,7 +26,6 @@ export class StudentsController {
   @ApiResponse({ status: 400, description: 'User undefined need a valid role [admin]' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Get()
-  @Auth(ValidRoles.admin)
   findAll(@Query() paginationDto:PaginationDto) {
     return this.studentsService.findAll(paginationDto);
   }
@@ -35,7 +35,6 @@ export class StudentsController {
   @ApiResponse({ status: 400, description: 'User undefined need a valid role [admin]' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Get(':term')
-  @Auth(ValidRoles.admin)
   findOne( @Param('term') term: string) {
     return this.studentsService.findOne(term);
   }
@@ -44,7 +43,6 @@ export class StudentsController {
   @ApiResponse({ status: 400, description: 'User undefined need a valid role [admin]' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Patch(':matricula')
-  @Auth(ValidRoles.admin)
   update(@Param('matricula') matricula: string, @Body() updateStudentDto: UpdateStudentDto) {
     return this.studentsService.update(matricula, updateStudentDto);
   }
@@ -53,7 +51,6 @@ export class StudentsController {
   @ApiResponse({ status: 400, description: 'User undefined need a valid role [admin]' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Delete(':term')
-  @Auth(ValidRoles.admin)
   remove(@Param('term') term: string) {
     return this.studentsService.remove(term);
   }
