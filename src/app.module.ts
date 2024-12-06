@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentsModule } from './students/students.module';
 import { ScholarshipsModule } from './scholarships/scholarships.module';
+import { HoursServiceModule } from './hours_service/hours_service.module';
+
 
 @Module({
   imports: [
@@ -26,7 +28,8 @@ import { ScholarshipsModule } from './scholarships/scholarships.module';
     CommonModule,
     AuthModule,
     StudentsModule,
-    ScholarshipsModule],
+    ScholarshipsModule,
+    HoursServiceModule],
   controllers: [AppController],
   providers: [AppService],
 

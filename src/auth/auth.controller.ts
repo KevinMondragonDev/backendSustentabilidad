@@ -18,7 +18,6 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'User was created successfully', type: CreateUserDto})
   @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
-  @Auth(ValidRoles.admin)
   @Post('register')
   createUser(@Body() createUserDto:CreateUserDto) {
     return this.authService.create(createUserDto);
