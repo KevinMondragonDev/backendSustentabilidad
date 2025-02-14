@@ -29,7 +29,16 @@ export class User {
     @Column('text', {
         select:false
     })
-    password:string;
+    password:string;    
+
+    
+    //* FullName
+    @ApiProperty({
+        description: 'Matricula de los usuarios',
+        type: String,
+    })
+    @Column('text')
+    enrollment:string;
 
     //* FullName
      @ApiProperty({
@@ -49,9 +58,19 @@ export class User {
     })
     isActive:boolean;
 
+    //* Ispenalized
+    @ApiProperty({
+        description: 'Los usuarios cuando son penalizados,se ponen como true',
+        type: Boolean,
+    })
+    @Column('bool' , {
+        default:true
+    })
+    Ispenalized:boolean;
+
     //* Roles de los usuarios
     @ApiProperty({
-        description: 'Los diferentes tipos usuarios de la app: admin, super-user, user, pero se define user por defecto',
+        description: 'Los diferentes tipos usuarios de la app: admin, voluntarios , user, pero se define user por defecto',
         type: [String],
     
     })
