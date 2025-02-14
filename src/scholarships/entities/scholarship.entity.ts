@@ -1,54 +1,62 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BeforeInsert, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import { BeforeInsert, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'Scholarship' })
+@Entity({ name: 'scholarship' })
 export class Scholarship {
 
-    @ApiProperty({
-        example: '1c18fb2d-9760-467c-bf0c-d2aacb0f8008',
-        description: 'UUID interno de la beca , no lo ve el usuario',
-        uniqueItems: true,
-    })
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @ApiProperty({
+    example: '1c18fb2d-9760-467c-bf0c-d2aacb0f8008',
+    description: 'Internal scholarship UUID, not visible to the user',
+    uniqueItems: true,
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ApiProperty({
-        example: 'ACADÉMICA',
-        description: 'Tipo de beca otorgada al estudiante',
-    })
-    @Column('text', {
-        unique: true,
-    })
-    tipo_beca: string;
-  
-    @ApiProperty({
-        example: "50",
-        description: 'rango del porcentaje de la beca (entre 0 y 100)',
-    })
-    @Column('text' , {
-        array:true,
-        default:['60']
-    })
-    rango_porcentaje: string[];
+  @ApiProperty({
+    example: 'ACADEMIC',
+    description: 'Type of scholarship awarded to the student',
+  })
+  @Column('text', {
+    unique: true,
+  })
+  scholarship_type: string;
 
+  @ApiProperty({
+    example: '50',
+    description: 'Range of the scholarship percentage (between 0 and 100)',
+  })
+  @Column('text', {
+    default: '60',
+  })
+  percentage_max_range: string;
 
-    @ApiProperty({
-        example: 'Para alumnos con promedios entre 8.5 y 9.4, ofreciendo una condonación de hasta el 80% de la cuota de reinscripción.',
-        description: ' Descripcion del tipo de beca otorgada al estudiante',
-    })
-    @Column()
-    descripcion: string;
+  @ApiProperty({
+    example: 'For students with averages between 8.5 and 9.4, offering up to 80% remission of the re-enrollment fee.',
+    description: 'Description of the type of scholarship awarded to the student',
+  })
+  @Column()
+  description: string;
 
+  @ApiProperty({
+    example: '20',
+    description: 'how many hours the scholarship need',
+  })
+  @Column('int', { default: 0 })
+  hours: number;
 
-    @BeforeInsert()
-    checkSlugUpdate() {
-        this.tipo_beca = this.normalizeString(this.tipo_beca);
-    }
+  @ManyToOne(() => User, (user) => user.scholarship)
+    user: User
 
-    private normalizeString(input: string): string {
-        return input
-            .toLocaleLowerCase()
-            .replaceAll(' ', '_')
-            .replaceAll("'", '');
-    }
+  @BeforeInsert()
+  checkSlugUpdate() {
+    this.scholarship_type = this.normalizeString(this.scholarship_type);
+  }
+
+  private normalizeString(input: string): string {
+    return input
+      .toLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", '');
+  }
 }

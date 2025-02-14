@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { HoursService } from 'src/hours_service/entities/hours_service.entity';
+import { Scholarship } from 'src/scholarships/entities/scholarship.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity({name:"users"})
@@ -82,7 +84,6 @@ export class User {
 
     @BeforeInsert()
     checkFieldsInsert() {
-
         this.mail = this.mail
             .toLowerCase()
             .trim();
@@ -96,4 +97,15 @@ export class User {
             .trim();
     }
 
+    @OneToMany(
+        () => HoursService,
+        (hoursService) => hoursService.user,
+        { cascade: true , eager: true }
+    )
+    hoursService: HoursService[];
+
+    @OneToMany(() => Scholarship, (scholarship) => scholarship.user,
+    { cascade: true , eager: true }
+)
+    scholarship: Scholarship;
 }   
