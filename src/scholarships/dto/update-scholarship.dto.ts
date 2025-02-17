@@ -10,7 +10,7 @@ export class UpdateScholarshipDto extends PartialType(CreateScholarshipDto) {
     })
     @IsString()
     @IsOptional()
-    tipo_beca?: string;
+    scholarship_type?: string;
   
     @ApiProperty({
         example: ["50", "60"],
@@ -19,7 +19,7 @@ export class UpdateScholarshipDto extends PartialType(CreateScholarshipDto) {
     @IsOptional()
     @IsArray()
     @IsString({each:true})
-    rango_porcentaje?: string[];
+    percentage_max_range?: string[];
 
     @ApiProperty({
         example: 'Para alumnos con promedios entre 8.5 y 9.4, ofreciendo una condonación de hasta el 80% de la cuota de reinscripción.',

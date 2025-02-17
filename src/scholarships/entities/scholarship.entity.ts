@@ -26,7 +26,7 @@ export class Scholarship {
     example: '50',
     description: 'Range of the scholarship percentage (between 0 and 100)',
   })
-  @Column('text', {
+  @Column('simple-array', {
     default: '60',
   })
   percentage_max_range: string;

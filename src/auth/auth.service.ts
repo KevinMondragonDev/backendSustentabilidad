@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Unauthor
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 
-import * as bcrypt from 'bcrypt';  
+import * as bcryptjs from 'bcryptjs';  
 import { Repository } from 'typeorm';
 import { error } from 'console';
 
@@ -25,7 +25,7 @@ export class AuthService {
       const { password, ...userData } = createUserDto;
       
       // Hash the password using bcrypt
-      const hashedPassword = await bcrypt.hashSync(password, 10)
+      const hashedPassword = await bcryptjs.hashSync(password, 10)
 
       const user = this.userRepository.create({
         ...userData,
@@ -68,7 +68,7 @@ export class AuthService {
     }
     
     // Comparar la contraseña proporcionada con la almacenada
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
     
     if (!isPasswordValid) {
         throw new UnauthorizedException(`Credenciales incorrectas`);

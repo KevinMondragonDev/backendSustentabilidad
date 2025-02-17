@@ -23,7 +23,7 @@ export class ScholarshipsService {
 
   async create(createScholarshipDto: CreateScholarshipDto) {
     try {
-      const scholarship = this.scholarshipRepository.create(createScholarshipDto);
+      const scholarship = this.scholarshipRepository.create( { ...createScholarshipDto, percentage_max_range: createScholarshipDto.percentage_max_range.join(',')}  );
       await this.scholarshipRepository.save(scholarship);
       return scholarship;
     } catch (error) {
@@ -39,21 +39,21 @@ export class ScholarshipsService {
     });
   }
 
-  async findOne(tipo_beca: string) {
-    const cleanedTipoBeca = this.cleanTipoBeca(tipo_beca);
-    const scholarship = await this.scholarshipRepository.findOneBy({ tipo_beca: cleanedTipoBeca });
+  async findOne(scholarship_type: string) {
+    const cleanedTipoBeca = this.cleanTipoBeca(scholarship_type);
+    const scholarship = await this.scholarshipRepository.findOneBy({ scholarship_type: cleanedTipoBeca });
 
     if (!scholarship) {
-      throw new NotFoundException(`Scholarship with tipo_beca "${tipo_beca}" not found`);
+      throw new NotFoundException(`Scholarship with scholarship_type "${scholarship_type}" not found`);
     }
 
     return scholarship;
   }
 
-  async update(tipo_beca: string, updateScholarshipDto: UpdateScholarshipDto) {
-    const scholarship = await this.findOne(tipo_beca);
-    this.scholarshipRepository.merge(scholarship, updateScholarshipDto);
-    scholarship.tipo_beca = this.cleanTipoBeca(scholarship.tipo_beca);
+  async update(scholarship_type: string, updateScholarshipDto: UpdateScholarshipDto) {
+    const scholarship = await this.findOne(scholarship_type);
+    this.scholarshipRepository.merge(scholarship, {...updateScholarshipDto, percentage_max_range: updateScholarshipDto.percentage_max_range.join(',')});
+    scholarship.scholarship_type = this.cleanTipoBeca(scholarship.scholarship_type);
 
     try {
       await this.scholarshipRepository.save(scholarship);
@@ -63,8 +63,8 @@ export class ScholarshipsService {
     }
   }
 
-  async remove(tipo_beca: string) {
-    const scholarship = await this.findOne(tipo_beca);
+  async remove(scholarship_type: string) {
+    const scholarship = await this.findOne(scholarship_type);
 
     try {
       await this.scholarshipRepository.remove(scholarship);
@@ -74,8 +74,8 @@ export class ScholarshipsService {
     }
   }
 
-  private cleanTipoBeca(tipo_beca: string): string {
-    return tipo_beca.toLowerCase().replace(/[\s']/g, '_');
+  private cleanTipoBeca(scholarship_type: string): string {
+    return scholarship_type.toLowerCase().replace(/[\s']/g, '_');
   }
 
   private handleDBExceptions(error: any) {

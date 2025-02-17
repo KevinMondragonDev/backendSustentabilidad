@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScholarshipsModule } from './scholarships/scholarships.module';
 import { HoursServiceModule } from './hours_service/hours_service.module';
+import { User } from './auth/entities/user.entity';
+import { HoursService } from './hours_service/entities/hours_service.entity';
 
 
 @Module({
@@ -17,7 +19,8 @@ import { HoursServiceModule } from './hours_service/hours_service.module';
       port: +process.env.DB_PORT,
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,      
+      password: process.env.DB_PASSWORD,
+      entities: [User, HoursService],      
       autoLoadEntities: true,
       synchronize: true,
     }),

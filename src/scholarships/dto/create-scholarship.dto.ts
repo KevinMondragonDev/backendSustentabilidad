@@ -8,8 +8,9 @@ export class CreateScholarshipDto {
         description: 'Tipo de beca otorgada al estudiante',
         uniqueItems: true,
     })
+
     @IsString()
-    tipo_beca: string;
+    scholarship_type: string;
   
     @ApiProperty({
         example: ["50", "60"],
@@ -17,7 +18,7 @@ export class CreateScholarshipDto {
     })
     @IsArray()
     @IsString({each:true})
-    rango_porcentaje: string[];
+    percentage_max_range: string[];
 
     @ApiProperty({
         example: 'Para alumnos con promedios entre 8.5 y 9.4, ofreciendo una condonación de hasta el 80% de la cuota de reinscripción.',
