@@ -47,7 +47,7 @@ export class ScholarshipsController {
   update(@Param('tipo_beca') tipo_beca: string, @Body() updateScholarshipDto: UpdateScholarshipDto) {
     return this.scholarshipsService.update(tipo_beca, updateScholarshipDto);
   }
-
+  //TODO: Implementar el borrado de becas con type_scholarship
   @ApiResponse({ status: 201, description: 'Scholarship is delete', type: Scholarship})
   @ApiResponse({ status: 401, description: 'Unauthorized"' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' }) 

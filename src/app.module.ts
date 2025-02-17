@@ -7,6 +7,7 @@ import { ScholarshipsModule } from './scholarships/scholarships.module';
 import { HoursServiceModule } from './hours_service/hours_service.module';
 import { User } from './auth/entities/user.entity';
 import { HoursService } from './hours_service/entities/hours_service.entity';
+import { UsersModule } from './users/users.module';
 
 
 @Module({
@@ -28,7 +29,8 @@ import { HoursService } from './hours_service/entities/hours_service.entity';
     CommonModule,
     AuthModule,
     ScholarshipsModule,
-    HoursServiceModule],
+    HoursServiceModule,
+    UsersModule],
   controllers: [],
   providers: [],
 
