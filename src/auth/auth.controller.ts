@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, SetMetadata, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { get, request } from 'http';
 
@@ -19,7 +19,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Bad request due to invalid input' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
   @Post('register')
-  createUser(@Body() createUserDto:CreateUserDto) {
+  createUser(@Body() createUserDto:CreateUserDto, @Query('scholarship') scholarship_type:string) {
     return this.authService.create(createUserDto);
   }
 

@@ -12,7 +12,7 @@ export class LoginUserDto{
     @IsString()
     @IsNotEmpty()
     @IsEmail()
-    mail:string;
+    email:string;
 
     @ApiProperty({
         example: 'Abc123',

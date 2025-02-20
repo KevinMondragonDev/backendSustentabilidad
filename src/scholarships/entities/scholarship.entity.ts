@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/auth/entities/user.entity';
-import { BeforeInsert, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'scholarship' })
 export class Scholarship {
@@ -15,7 +15,7 @@ export class Scholarship {
 
   @ApiProperty({
     example: 'ACADEMIC',
-    description: 'Type of scholarship awarded to the student',
+    description: 'Type of scholarship a≠≠warded to the student',
   })
   @Column('text', {
     unique: true,
@@ -40,13 +40,14 @@ export class Scholarship {
 
   @ApiProperty({
     example: '20',
-    description: 'how many hours the scholarship need',
+    description: 'how many hours the scholarship needs',
   })
   @Column('int', { default: 0 })
   hours: number;
 
-  @ManyToOne(() => User, (user) => user.scholarship)
-    user: User
+  @OneToMany(() => User, (user) => user.scholarship_type)
+  users: User[];
+
 
   @BeforeInsert()
   checkSlugUpdate() {

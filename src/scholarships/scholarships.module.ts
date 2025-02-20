@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ScholarshipsService } from './scholarships.service';
 import { ScholarshipsController } from './scholarships.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -6,11 +6,12 @@ import { Scholarship } from './entities/scholarship.entity';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports:[
+  imports: [
     TypeOrmModule.forFeature([Scholarship]),
-    AuthModule
+    forwardRef(() => AuthModule), 
   ],
   controllers: [ScholarshipsController],
   providers: [ScholarshipsService],
+  exports: [TypeOrmModule, ScholarshipsService], 
 })
 export class ScholarshipsModule {}

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,30 +8,29 @@ import { AuthService } from './auth.service';
 import { User } from './entities/user.entity';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UsersModule } from 'src/users/users.module';
+import { Scholarship } from 'src/scholarships/entities/scholarship.entity';
+import { ScholarshipsModule } from 'src/scholarships/scholarships.module';
 
 @Module({
   controllers: [AuthController],
-  imports:[
+  imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User]),
-    PassportModule.register({defaultStrategy: 'jwt'}),
+    TypeOrmModule.forFeature([User, Scholarship]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    UsersModule,
+    forwardRef(() => ScholarshipsModule), 
 
     JwtModule.registerAsync({
-      imports:[ConfigModule],
-      inject:[ConfigService],
-      useFactory:(configService:ConfigService) => {
-        console.log(`Secret Jwt: ${configService.get('JWT_SECRET')}`)
-        console.log(`Secret Jwt: ${process.env.JWT_SECRET}`)
-        return{
-          secret: configService.get('JWT_SECRET'),
-          signOptions:{
-            expiresIn:'2h'
-          }
-        }
-      }
-    })
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '2h' },
+      }),
+    }),
   ],
-  providers: [AuthService , JwtStrategy],
-  exports:[TypeOrmModule, JwtStrategy, PassportModule, JwtModule ]
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService, JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}

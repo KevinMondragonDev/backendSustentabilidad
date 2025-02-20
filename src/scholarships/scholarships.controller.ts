@@ -3,57 +3,57 @@ import { ScholarshipsService } from './scholarships.service';
 import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 import { PaginationDto } from '../common/dtos/pagination.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Scholarship } from './entities/scholarship.entity';
 import { Auth } from 'src/auth/decorators';
 import { ValidRoles } from 'src/auth/interfaces';
 
-
+@ApiTags('Scholarships')
 @Controller('scholarships')
 export class ScholarshipsController {
   constructor(private readonly scholarshipsService: ScholarshipsService) {}
 
-  @ApiResponse({ status: 201, description: 'Scholarship check-status', type: Scholarship})
-  @ApiResponse({ status: 400, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' })
+  @ApiOperation({ summary: 'Crear una beca' })
+  @ApiResponse({ status: 201, description: 'Scholarship creada exitosamente', type: Scholarship })
+  @ApiResponse({ status: 400, description: 'Bad Request - Datos incorrectos' })
+  @ApiResponse({ status: 403, description: 'Forbidden - No autorizado' })
   @Auth(ValidRoles.admin)
   @Post()
   create(@Body() createScholarshipDto: CreateScholarshipDto) {
     return this.scholarshipsService.create(createScholarshipDto);
   }
 
-
-  @ApiResponse({ status: 201, description: 'Scholarship check-status', type: Scholarship})
-  @ApiResponse({ status: 400, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' }) 
+  @ApiOperation({ summary: 'Obtener todas las becas con paginación' })
+  @ApiResponse({ status: 200, description: 'Lista de becas obtenida correctamente', type: [Scholarship] })
   @Get()
-  findAll(@Query() paginationDto:PaginationDto) {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.scholarshipsService.findAll(paginationDto);
   }
-  
-  @ApiResponse({ status: 201, description: 'Scholarship ', type: Scholarship})
-  @ApiResponse({ status: 400, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' }) 
-  @Get(':tipo_beca')
-  findOne(@Param('tipo_beca') tipo_beca: string) {
-    return this.scholarshipsService.findOne(tipo_beca);
+
+  @ApiOperation({ summary: 'Obtener una beca por tipo' })
+  @ApiResponse({ status: 200, description: 'Scholarship encontrada', type: Scholarship })
+  @ApiResponse({ status: 404, description: 'Scholarship no encontrada' })
+  @Get(':scholarship_type')
+  findOne(@Param('scholarship_type') scholarship_type: string) {
+    return this.scholarshipsService.findOne(scholarship_type);
   }
 
-  @ApiResponse({ status: 201, description: 'Scholarship check-status', type: Scholarship})
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' }) 
+  @ApiOperation({ summary: 'Actualizar una beca' })
+  @ApiResponse({ status: 200, description: 'Scholarship actualizada correctamente', type: Scholarship })
+  @ApiResponse({ status: 400, description: 'Bad Request - Datos incorrectos' })
+  @ApiResponse({ status: 404, description: 'Scholarship no encontrada' })
   @Auth(ValidRoles.admin)
-  @Patch(':tipo_beca')
-  update(@Param('tipo_beca') tipo_beca: string, @Body() updateScholarshipDto: UpdateScholarshipDto) {
-    return this.scholarshipsService.update(tipo_beca, updateScholarshipDto);
+  @Patch(':scholarship_type')
+  update(@Param('scholarship_type') scholarship_type: string, @Body() updateScholarshipDto: UpdateScholarshipDto) {
+    return this.scholarshipsService.update(scholarship_type, updateScholarshipDto);
   }
-  //TODO: Implementar el borrado de becas con type_scholarship
-  @ApiResponse({ status: 201, description: 'Scholarship is delete', type: Scholarship})
-  @ApiResponse({ status: 401, description: 'Unauthorized"' })
-  @ApiResponse({ status: 403, description: 'Forbidden. Token related issues' }) 
+
+  @ApiOperation({ summary: 'Eliminar una beca' })
+  @ApiResponse({ status: 200, description: 'Scholarship eliminada correctamente' })
+  @ApiResponse({ status: 404, description: 'Scholarship no encontrada' })
   @Auth(ValidRoles.admin)
-  @Delete(':tipo_beca')
-  remove(@Param('tipo_beca') tipo_beca: string) {
-    return this.scholarshipsService.remove(tipo_beca);
+  @Delete(':scholarship_type')
+  remove(@Param('scholarship_type') scholarship_type: string) {
+    return this.scholarshipsService.remove(scholarship_type);
   }
 }

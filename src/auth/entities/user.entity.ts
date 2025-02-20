@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { HoursService } from 'src/hours_service/entities/hours_service.entity';
 import { Scholarship } from 'src/scholarships/entities/scholarship.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity({name:"users"})
 export class User {
@@ -21,7 +21,7 @@ export class User {
     @Column('text', {
         unique:true
     })
-    mail:string;
+    email:string;
 
     //* Password
     @ApiProperty({
@@ -43,7 +43,7 @@ export class User {
     enrollment:string;
 
     //* FullName
-     @ApiProperty({
+    @ApiProperty({
         description: 'Nombre completo de los usuarios',
         type: String,
     })
@@ -66,9 +66,9 @@ export class User {
         type: Boolean,
     })
     @Column('bool' , {
-        default:true
+        default:false
     })
-    Ispenalized:boolean;
+    isPenalized:boolean;
 
     //* Roles de los usuarios
     @ApiProperty({
@@ -82,9 +82,16 @@ export class User {
     })
     roles:string[];
 
+    @ApiProperty({ description: 'Horas adeudadas por el usuario', type: Number })
+    @Column('decimal', { 
+        precision: 10, 
+        scale: 2, 
+        default: 0 })
+    owed_hours: number;
+
     @BeforeInsert()
     checkFieldsInsert() {
-        this.mail = this.mail
+        this.email = this.email
             .toLowerCase()
             .trim();
     }
@@ -92,11 +99,15 @@ export class User {
     @BeforeUpdate()
     checkFieldsBeforeUpdate() {
 
-        this.mail = this.mail
+        this.email = this.email
             .toLowerCase()
             .trim();
     }
-
+    @ManyToOne(() => Scholarship, (scholarship) => scholarship.users, {
+        eager: true, // Cargar automáticamente la beca con el usuario
+    })
+    scholarship_type: Scholarship;
+    
     @OneToMany(
         () => HoursService,
         (hoursService) => hoursService.user,
@@ -104,8 +115,8 @@ export class User {
     )
     hoursService: HoursService[];
 
-    @OneToMany(() => Scholarship, (scholarship) => scholarship.user,
-    { cascade: true , eager: true }
-)
-    scholarship: Scholarship;
+//     @OneToMany(() => Scholarship, (scholarship) => scholarship.user,
+//     { cascade: true , eager: true }
+// )
+//     scholarship_type: Scholarship;
 }   

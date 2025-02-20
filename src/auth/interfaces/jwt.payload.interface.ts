@@ -2,7 +2,7 @@
 
 
 export interface JwtPayload {
-    //mail:string;
+    // email:string;
     id:string;
 
 }

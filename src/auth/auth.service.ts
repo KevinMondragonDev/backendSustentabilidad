@@ -1,65 +1,90 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-
-import * as bcryptjs from 'bcryptjs';  
+import * as bcrypt from 'bcryptjs';  
 import { Repository } from 'typeorm';
-import { error } from 'console';
-
 import { User } from './entities/user.entity';
 import { LoginUserDto, CreateUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt.payload.interface';
-import { GetUser } from './decorators/get-user.decorator';
+import { Scholarship } from '../scholarships/entities/scholarship.entity';
 
-
+bcrypt.setRandomFallback((size: number) => {
+  const buf = new Uint8Array(size);
+  return Array.from(buf).map(() => Math.floor(Math.random() * 256));
+});
 @Injectable()
 export class AuthService {
   constructor( 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly jwtService:JwtService
+    private readonly jwtService:JwtService,
+    @InjectRepository(Scholarship) 
+    private readonly scholarshipRepository: Repository<Scholarship>
   ){}
-
-  async create(createUserDto: CreateUserDto) {
+  
+  async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const { password, ...userData } = createUserDto;
+      const { email, password, fullName, scholarship } = createUserDto;
+  
+      const matriculaMatch = email.match(/^0(\d{8})@upsrj\.edu\.mx$/);
+      if (!matriculaMatch) {
+        throw new BadRequestException('Invalid email, it must be a valid UPSRJ email (Example: 022000949@upsrj.edu.mx)');
+      }
+  
+      const enrollment = `0${matriculaMatch[1]}`;
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const normalizedScholarship = scholarship.toLowerCase().trim();
       
-      // Hash the password using bcrypt
-      const hashedPassword = await bcryptjs.hashSync(password, 10)
-
-      const user = this.userRepository.create({
-        ...userData,
-        password: hashedPassword  // Use the hashed password
+      const foundScholarship = await this.scholarshipRepository.findOne({
+        where: { scholarship_type: normalizedScholarship },
       });
-
+  
+      if (!foundScholarship) {
+        throw new NotFoundException(`La beca '${scholarship}' no existe`);
+      }
+      // Crear usuario con la beca seleccionada
+      const user = this.userRepository.create({
+        email,
+        password: hashedPassword,
+        fullName,
+        enrollment,
+        isActive: true,
+        isPenalized: false,
+        roles: ['user'],
+        owed_hours: foundScholarship.hours, // Se asignan las horas de la beca
+        scholarship_type: foundScholarship, // Se asigna la beca al usuario
+      });
+  
       await this.userRepository.save(user);
       delete user.password;
-      delete user.roles;
-
-      return {
-        ...user,
-        token: this.getJwtToken({id: user.id})
-      };
-
+      return user;
+  
     } catch (error) {
       this.handleDBErrors(error);
     }
   }
+  
 
-  async checkAuthStatus( user:User){
+  async checkAuthStatus(user:User){
     return {
-      ...user,
-      token: this.getJwtToken({id: user.id})
+      email: user.email,
+      fullName: user.fullName,
+      isActive: user.isActive,
+      isPenalized: user.isPenalized,
+      
+      
     };
   }
   async login(loginUserDto: LoginUserDto) {
-    const { password, mail } = loginUserDto;
+    const { password, email} = loginUserDto;
     
-    const mailLowerCase = mail.toLowerCase().trim();
+    const emailLowerCase = email.toLowerCase().trim();
     // Buscar el usuario y seleccionar solo el correo y la contraseña
     const user = await this.userRepository.findOne({
-        where: { mail: mailLowerCase},
-        select: { mail: true, password: true, id:true },
+      
+        where: { email: emailLowerCase},
+        select: { email: true, password: true, id:true, fullName:true, enrollment:true, isActive:true, isPenalized:true, roles:true },
     });
     
     // Verificar si el usuario existe
@@ -68,7 +93,7 @@ export class AuthService {
     }
     
     // Comparar la contraseña proporcionada con la almacenada
-    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     
     if (!isPasswordValid) {
         throw new UnauthorizedException(`Credenciales incorrectas`);

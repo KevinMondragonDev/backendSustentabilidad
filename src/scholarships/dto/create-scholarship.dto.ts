@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsString } from "class-validator";
+import { IsArray, IsInt, IsString, Min } from "class-validator";
 
 export class CreateScholarshipDto {
 
+    
     @ApiProperty({
         example: 'ACADÉMICA',
         description: 'Tipo de beca otorgada al estudiante',
@@ -25,7 +26,14 @@ export class CreateScholarshipDto {
         description: ' Descripcion del tipo de beca otorgada al estudiante',
     })
     @IsString()
-    descripcion: string;
+    description: string;
 
+    @ApiProperty({
+        example: 20,
+        description: 'Número de horas que se deben cumplir para la beca',
+    })
+    @IsInt()
+    @Min(0)
+    hours: number;
     
 }
