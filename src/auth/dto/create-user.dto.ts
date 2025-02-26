@@ -38,6 +38,7 @@ export class CreateUserDto{
 
     @ApiProperty({ example: 'ACADEMIC', description: 'Tipo de beca seleccionada por el usuario' })
     @IsString()
+    
     @IsNotEmpty()
     scholarship: string;
 }

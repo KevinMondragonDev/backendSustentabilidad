@@ -115,8 +115,4 @@ export class User {
     )
     hoursService: HoursService[];
 
-//     @OneToMany(() => Scholarship, (scholarship) => scholarship.user,
-//     { cascade: true , eager: true }
-// )
-//     scholarship_type: Scholarship;
 }   
