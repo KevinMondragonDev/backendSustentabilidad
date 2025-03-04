@@ -175,8 +175,8 @@ export class AuthService {
     try {
       const user = await this.userRepository.findOne({ where: { enrollment } });
       if (!user) throw new NotFoundException(`Usuario con id ${enrollment} no encontrado`);
-
       return user;
+      
     } 
     catch (error) {
       this.handleDBErrors(error);

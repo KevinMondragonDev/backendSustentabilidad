@@ -31,15 +31,16 @@ export class HoursService {
     description: 'Revisa si se completó la jornada, con registro de inicio y fin',
     type: Boolean,
   })
-  @Column('bool', { default: true })
+  @Column('bool', { default: false })
   isComplete: boolean;
 
   @ApiProperty({
     description: 'Total de las horas realizadas',
     type: Number,
   })
-  @Column('int', { default: 0 })
+  @Column('numeric', { precision: 10, scale: 2, default: 0 })
   total_hours: number;
+
 
   @ManyToOne(() => User, (user) => user.hoursService)
   user: User;
