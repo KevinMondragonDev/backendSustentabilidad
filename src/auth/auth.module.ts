@@ -8,7 +8,6 @@ import { AuthService } from './auth.service';
 import { User } from './entities/user.entity';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { UsersModule } from 'src/users/users.module';
 import { Scholarship } from 'src/scholarships/entities/scholarship.entity';
 import { ScholarshipsModule } from 'src/scholarships/scholarships.module';
 
@@ -18,7 +17,6 @@ import { ScholarshipsModule } from 'src/scholarships/scholarships.module';
     ConfigModule,
     TypeOrmModule.forFeature([User, Scholarship]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    UsersModule,
     forwardRef(() => ScholarshipsModule), 
 
     JwtModule.registerAsync({

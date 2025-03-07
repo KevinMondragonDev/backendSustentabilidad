@@ -7,7 +7,7 @@ import { ScholarshipsModule } from './scholarships/scholarships.module';
 import { HoursServiceModule } from './hours_service/hours_service.module';
 import { User } from './auth/entities/user.entity';
 import { HoursService } from './hours_service/entities/hours_service.entity';
-import { UsersModule } from './users/users.module';
+import { SeedModule } from './seed/seed.module';
 
 
 @Module({
@@ -30,7 +30,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     ScholarshipsModule,
     HoursServiceModule,
-    UsersModule],
+    SeedModule],
   controllers: [],
   providers: [],
 

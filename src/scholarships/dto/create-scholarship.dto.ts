@@ -36,4 +36,6 @@ export class CreateScholarshipDto {
     @Min(0)
     hours: number;
     
+
+
 }

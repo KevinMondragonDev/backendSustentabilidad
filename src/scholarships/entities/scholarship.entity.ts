@@ -29,7 +29,7 @@ export class Scholarship {
   @Column('simple-array', {
     default: '60',
   })
-  percentage_max_range: string;
+  percentage_max_range: string[];
 
   @ApiProperty({
     example: 'For students with averages between 8.5 and 9.4, offering up to 80% remission of the re-enrollment fee.',

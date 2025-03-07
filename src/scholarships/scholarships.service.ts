@@ -20,16 +20,32 @@ export class ScholarshipsService {
     @InjectRepository(Scholarship)
     private readonly scholarshipRepository: Repository<Scholarship>,
   ) {}
-
-  async create(createScholarshipDto: CreateScholarshipDto) {
-    try {
-      const scholarship = this.scholarshipRepository.create( { ...createScholarshipDto, percentage_max_range: createScholarshipDto.percentage_max_range.join(',')}  );
-      await this.scholarshipRepository.save(scholarship);
-      return scholarship;
-    } catch (error) {
-      this.handleDBExceptions(error);
-    }
+// Para el método create
+async create(createScholarshipDto: CreateScholarshipDto) {
+  try {
+    // Simplemente pasa el array directamente
+    const scholarship = this.scholarshipRepository.create(createScholarshipDto);
+    await this.scholarshipRepository.save(scholarship);
+    
+    return scholarship;
+  } catch (error) {
+    // Manejo de errores
   }
+}
+
+// Para el método update
+async update(id: string, updateScholarshipDto: UpdateScholarshipDto) {
+  try {
+    const scholarship = await this.findOne(id);
+    // Simplemente pasa el objeto sin manipular el array
+    this.scholarshipRepository.merge(scholarship, updateScholarshipDto);
+    await this.scholarshipRepository.save(scholarship);
+    
+    return scholarship;
+  } catch (error) {
+    // Manejo de errores
+  }
+}
 
   async findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
@@ -50,18 +66,7 @@ export class ScholarshipsService {
     return scholarship;
   }
 
-  async update(scholarship_type: string, updateScholarshipDto: UpdateScholarshipDto) {
-    const scholarship = await this.findOne(scholarship_type);
-    this.scholarshipRepository.merge(scholarship, {...updateScholarshipDto, percentage_max_range: updateScholarshipDto.percentage_max_range.join(',')});
-    scholarship.scholarship_type = this.cleanTipoBeca(scholarship.scholarship_type);
-
-    try {
-      await this.scholarshipRepository.save(scholarship);
-      return scholarship;
-    } catch (error) {
-      this.handleDBExceptions(error);
-    }
-  }
+  
 
   async remove(scholarship_type: string) {
     const scholarship = await this.findOne(scholarship_type);
