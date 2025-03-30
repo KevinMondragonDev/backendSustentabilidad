@@ -7,7 +7,8 @@ import {
   BadRequestException,
   NotFoundException,
   Headers,
-  UnauthorizedException
+  UnauthorizedException,
+  Query
 } from '@nestjs/common';
 
 import { Auth } from 'src/auth/decorators/auth.decorator';
@@ -63,5 +64,20 @@ export class HoursServiceController {
     @Param('enrollment') enrollment: string){ 
     return this.hoursServiceService.getHoursRecordsByUser(enrollment);
   }
+
+  // Obtener registros de horas por fecha
+  @Get('records/date/:enrollment')
+  @ApiResponse({ status: 200, description: 'Registros de horas obtenidos correctamente' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async getHoursRecordsByUserByDate(
+  @Param('enrollment') enrollment: string,
+  @Query('month') month: number,
+  @Query('year') year: number
+  ) { 
+  return this.hoursServiceService.getHoursRecordsByUserByDate(enrollment, month, year);
+  }
+
+
 }
+
     

@@ -38,34 +38,40 @@ export class SeedService {
         }
         ,
         {
-          scholarship_type: 'académica',
+          scholarship_type: 'excelencia',
           description: 'Beca por excelencia académica',
-          hours: 80,
-          percentage_max_range: ['20', '50', '80']
+          hours: 16,
+          percentage_max_range: ['80']
+        },
+        {
+          scholarship_type: 'academica',
+          description: 'Beca por excelencia académica',
+          hours: 16,
+          percentage_max_range: ['80']
         },
         {
           scholarship_type: 'deportiva',
           description: 'Beca por mérito deportivo',
-          hours: 100,
-          percentage_max_range: ['30', '60', '90']
+          hours: 16,
+          percentage_max_range: ['90']
         },
         {
           scholarship_type: 'cultural',
           description: 'Beca por participación en actividades culturales',
-          hours: 70,
-          percentage_max_range: ['20', '40', '70']
+          hours: 16,
+          percentage_max_range: ['90']
         },
         {
           scholarship_type: 'socioeconomica',
-          description: 'Beca por necesidad económica',
-          hours: 120,
-          percentage_max_range: ['40', '70', '100']
+          description: 'Beca para apoyo socioeconómico',
+          hours: 16,
+          percentage_max_range: [ '70']
         },
         {
-          scholarship_type: 'convenio',
-          description: 'Beca por convenio institucional',
-          hours: 60,
-          percentage_max_range: ['25', '50', '75']
+          scholarship_type: 'prioritario',
+          description: ' Beca por grupo de atencion prioritario',
+          hours: 16,
+          percentage_max_range: [ '40']
         }
       ];
       

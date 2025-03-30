@@ -1,16 +1,19 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ArrayNotEmpty, IsArray, IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateUserDto{
 
     @ApiProperty({
-        example: 'AndreaStudent@gmail.com',
+        example: '022000949@upsrj.edu.mx',
         description: 'Correo del Usuario',
         type: "string"
     })
     @IsString()
     @IsNotEmpty()
     @IsEmail()
+    @Matches(/^0(\d{8})@upsrj\.edu\.mx$/, {
+        message: 'Email inválido. Debe ser de la UPSRJ (Ej: 022000949@upsrj.edu.mx)'
+    })
     email:string;
 
     @ApiProperty({
@@ -34,11 +37,10 @@ export class CreateUserDto{
     })
     @IsString()
     @MinLength(1)
-    fullName:string;
+        fullName:string;
 
     @ApiProperty({ example: 'ACADEMIC', description: 'Tipo de beca seleccionada por el usuario' })
     @IsString()
-    
     @IsNotEmpty()
-    scholarship: string;
+        scholarship: string;
 }
