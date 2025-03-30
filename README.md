@@ -35,13 +35,13 @@ pnpm install
 Crear un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
 ```env
-JWT_SECRET='Secreto'
+JWT_SECRET='///'
 PORT=3002
-DB_PASSWORD=root
-DB_NAME=SustabilidadDB
+DB_PASSWORD= ///
+DB_NAME= ///
 DB_HOST=localhost
-DB_PORT=5434
-DB_USERNAME=postgres
+DB_PORT= ///
+DB_USERNAME= ///
 ```
 
 ### 2.5 Levantar la base de datos con Docker
@@ -112,8 +112,8 @@ POST /api/sustentabilidad/auth/register
 
 ```json
 {
-  "email": "022000222@upsrj.edu.mx",
-  "password": "Abc123",
+  "email": "enrollment@upsrj.edu.mx",
+  "password": "example1111",
   "fullName": "juan rosa",
   "scholarship": "academica"
 }
@@ -123,8 +123,8 @@ POST /api/sustentabilidad/auth/register
 
 ```json
 {
-  "email": "022000222@upsrj.edu.mx",
-  "enrollment": "022000222",
+  "email": "enrollment@upsrj.edu.mx",
+  "enrollment": "enrollment",
   "fullName": "juan rosa",
   "isActive": true,
   "isPenalized": false,
@@ -151,8 +151,8 @@ POST /api/sustentabilidad/auth/login
 
 ```json
 {
-  "email": "022000222@upsrj.edu.mx",
-  "password": "Abc123"
+  "email": "enrollment@upsrj.edu.mx",
+  "password": "example1111"
 }
 ```
 
