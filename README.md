@@ -378,7 +378,7 @@ GET /api/sustentabilidad/hours-service/records/date/(enrollment)?month=(number)&
 
 **Kevin Arturo Mondragon Tapia** - Desarrollador Backend
 
-**Noe** - Tester Backend
+**José Noé Sánchez Espinoza** - Tester Backend
 
 ---
 
