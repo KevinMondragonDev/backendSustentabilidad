@@ -1,13 +1,13 @@
-import { 
-  BadRequestException, 
-  Injectable, 
-  InternalServerErrorException, 
-  NotFoundException, 
-  UnauthorizedException 
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';  
+import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Scholarship } from '../scholarships/entities/scholarship.entity';
@@ -22,15 +22,15 @@ bcrypt.setRandomFallback((size: number) => {
 
 @Injectable()
 export class AuthService {
-  constructor( 
+  constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    
-    @InjectRepository(Scholarship) 
+
+    @InjectRepository(Scholarship)
     private readonly scholarshipRepository: Repository<Scholarship>,
-    
+
     private readonly jwtService: JwtService,
-  ){}
+  ) {}
 
   /**
    * -------------- CREACIÓN Y AUTENTICACIÓN DE USUARIOS --------------
@@ -43,9 +43,11 @@ export class AuthService {
 
       // Validar formato del email (UPSRJ)
       const matriculaMatch = email.match(/^0(\d{8})@upsrj\.edu\.mx$/);
-      //todo - Cambiar el dto 
+      //todo - Cambiar el dto
       if (!matriculaMatch) {
-        throw new BadRequestException('Email inválido. Debe ser de la UPSRJ (Ej: 022000949@upsrj.edu.mx)');
+        throw new BadRequestException(
+          'Email inválido. Debe ser de la UPSRJ (Ej: 022000949@upsrj.edu.mx)',
+        );
       }
       const enrollment = `0${matriculaMatch[1]}`;
 
@@ -70,14 +72,13 @@ export class AuthService {
         isActive: true,
         isPenalized: false,
         roles: ['user'],
-        owed_hours: foundScholarship.hours, 
-        scholarship_type: foundScholarship, 
+        owed_hours: foundScholarship.hours,
+        scholarship_type: foundScholarship,
       });
 
       await this.userRepository.save(user);
       delete user.password;
       return user;
-
     } catch (error) {
       this.handleDBErrors(error);
     }
@@ -86,18 +87,27 @@ export class AuthService {
   // Iniciar sesión
   async login(loginUserDto: LoginUserDto) {
     const { password, email } = loginUserDto;
-    
+
     const emailLowerCase = email.toLowerCase().trim();
     const user = await this.userRepository.findOne({
       where: { email: emailLowerCase },
-      select: ['id', 'email', 'password', 'fullName', 'enrollment', 'isActive', 'isPenalized', 'roles'],
+      select: [
+        'id',
+        'email',
+        'password',
+        'fullName',
+        'enrollment',
+        'isActive',
+        'isPenalized',
+        'roles',
+      ],
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
     delete user.password;
-    
+
     return { token: this.getJwtToken({ id: user.id }) };
   }
 
@@ -111,16 +121,25 @@ export class AuthService {
    */
 
   // Penalizar usuario (solo administradores)
-  async penalizeUser(enrollment: string, updatePenalizedDto: UpdatePenalizedDto): Promise<User> {
+  async penalizeUser(
+    enrollment: string,
+    updatePenalizedDto: UpdatePenalizedDto,
+  ): Promise<User> {
     try {
       const user = await this.userRepository.findOne({ where: { enrollment } });
-      if (!user) throw new NotFoundException(`Usuario con id ${enrollment} no encontrado`);
+      if (!user)
+        throw new NotFoundException(
+          `Usuario con id ${enrollment} no encontrado`,
+        );
 
       user.isPenalized = updatePenalizedDto.isPenalized === 'true';
 
       if (user.isPenalized) {
-        const punishmentScholarship = await this.scholarshipRepository.findOne({ where: { scholarship_type: 'castigo' } });
-        if (!punishmentScholarship) throw new NotFoundException(`La beca 'castigo' no existe`);
+        const punishmentScholarship = await this.scholarshipRepository.findOne({
+          where: { scholarship_type: 'castigo' },
+        });
+        if (!punishmentScholarship)
+          throw new NotFoundException(`La beca 'castigo' no existe`);
 
         user.owed_hours = punishmentScholarship.hours;
         user.scholarship_type = punishmentScholarship;
@@ -129,7 +148,7 @@ export class AuthService {
       if (!user.isPenalized) {
         user.scholarship_type = null;
       }
-      
+
       await this.userRepository.save(user);
       return user;
     } catch (error) {
@@ -138,10 +157,16 @@ export class AuthService {
   }
 
   // Desactivar usuario (solo administradores)
-  async deactivateUser(enrollment: string, desactivateUserDto: DesactivateUserDto): Promise<User> {
+  async desactivateUser(
+    enrollment: string,
+    desactivateUserDto: DesactivateUserDto,
+  ): Promise<User> {
     try {
       const user = await this.userRepository.findOne({ where: { enrollment } });
-      if (!user) throw new NotFoundException(`Usuario con id ${enrollment} no encontrado`);
+      if (!user)
+        throw new NotFoundException(
+          `Usuario con id ${enrollment} no encontrado`,
+        );
 
       user.isActive = desactivateUserDto.isActive === 'true';
       if (!user.isActive) {
@@ -149,7 +174,7 @@ export class AuthService {
         user.owed_hours = 0;
         user.scholarship_type = null;
       }
-      
+
       await this.userRepository.save(user);
       return user;
     } catch (error) {
@@ -164,21 +189,67 @@ export class AuthService {
       fullName: user.fullName,
       enrollment: user.enrollment,
       isPenalized: user.isPenalized,
-      scholarship: user.scholarship_type ? user.scholarship_type.scholarship_type : null,
+      scholarship: user.scholarship_type
+        ? user.scholarship_type.scholarship_type
+        : null,
       owed_hours: user.owed_hours,
     };
   }
 
   // Actualizar datos del usuario (solo administradores)
-  //TODO - Implementar actualizacion de usuario
-  async updateUser(enrollment: string, updateUserDto: Partial<CreateUserDto>): Promise<User> {
+  async updateUser(
+    enrollment: string,
+    updateUserDto: Partial<CreateUserDto>,
+  ): Promise<User> {
     try {
       const user = await this.userRepository.findOne({ where: { enrollment } });
-      if (!user) throw new NotFoundException(`Usuario con id ${enrollment} no encontrado`);
+      if (!user)
+        throw new NotFoundException(
+          `Usuario con id ${enrollment} no encontrado`,
+        );
+
+      // Actualiza solo los campos permitidos por el DTO
+      if (updateUserDto.email) {
+        const matriculaMatch = updateUserDto.email.match(
+          /^0(\d{8})@upsrj\.edu\.mx$/,
+        );
+        if (!matriculaMatch) {
+          throw new BadRequestException(
+            'Email inválido. Debe ser de la UPSRJ (Ej: 022000949@upsrj.edu.mx)',
+          );
+        }
+        user.email = updateUserDto.email.toLowerCase().trim();
+        user.enrollment = `0${matriculaMatch[1]}`;
+      }
+
+      if (updateUserDto.password) {
+        user.password = await bcrypt.hash(updateUserDto.password, 10);
+      }
+
+      if (updateUserDto.fullName) {
+        user.fullName = updateUserDto.fullName;
+      }
+
+      if (updateUserDto.scholarship) {
+        const normalizedScholarship = updateUserDto.scholarship
+          .toLowerCase()
+          .trim();
+        const foundScholarship = await this.scholarshipRepository.findOne({
+          where: { scholarship_type: normalizedScholarship },
+        });
+        if (!foundScholarship) {
+          throw new NotFoundException(
+            `La beca '${updateUserDto.scholarship}' no existe`,
+          );
+        }
+        user.scholarship_type = foundScholarship;
+        user.owed_hours = foundScholarship.hours;
+      }
+
+      await this.userRepository.save(user);
+      delete user.password;
       return user;
-      
-    } 
-    catch (error) {
+    } catch (error) {
       this.handleDBErrors(error);
     }
   }
@@ -192,6 +263,8 @@ export class AuthService {
       throw new BadRequestException(error.details);
     }
     console.log(error);
-    throw new InternalServerErrorException('Error interno en el servidor. Revisa los logs.');
+    throw new InternalServerErrorException(
+      'Error interno en el servidor. Revisa los logs.',
+    );
   }
 }
